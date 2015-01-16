@@ -106,31 +106,37 @@ loopNum=1000;
 % 定义BlinRealangle BlinFalseangle
 BlinRealangle=zeros(1,LandBSNum);BlinFlaseangle=zeros(1,LandBSNum);
 % 可能用到的变量
-tmpBSCGrp=BBSbraodinfo;tmpcutBSCGrp=BBSbraodinfo;
+tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;
 tmpLBSpos=LBSbroadinfo;tmpcutLBSpos=LBSbroadinfo;
 
 for loop=1:1:1000
     for i=1:1:BlinBSNum
-       for j=1:1:LandBSNum
-                  tmpBSCGrp=BBSbraodinfo;tmpcutBSCGrp=BBSbraodinfo;
+        
+       tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;
        tmpLBSpos=LBSbroadinfo;tmpcutLBSpos=LBSbroadinfo;
+       
+       for j=1:1:LandBSNum
            % 获得此刻Blind BSCs 对第j个Landmark BSC的位置估计
            tmpBSCGrp(:,angle)=generangle( LBSbroadinfo(j,xpos:ypos),TrueBlinBSinfo);
-           [estimX,estimY]=lslocation(tmpBSCGrp);
-           tmpLBSpos(j,xpos:ypos)=[estimX,estimY];
+           tmpcutBSCGrp(:,angle)=tmpBSCGrp(:,angle);
+           
            % 去除第i个Blind BSC后，重新定位Landmark
-           tmpBSCGrp(i,:)=[];
-           [estimX,estimY]=lslocation(tmpBSCGrp);
-           tmpcutLBSpos(j,xpos:ypos)=[estimX,estimY];
+           tmpcutBSCGrp(i,:)=[];      
+           [estimX1,estimY1]=lslocation(tmpBSCGrp);
+           [estimX2,estimY2]=lslocation(tmpcutBSCGrp);          
            % 判断位置并进行修正
-           if sum((tmpLBSpos(j,xpos:ypos)-LBSbroadinfo(j,xpos:ypos)).^2)<sum((tmpcutLBSpos(j,xpos:ypos)-LBSbroadinfo(j,xpos:ypos)).^2)
-                vector=tmpcutLBSpos(j,xpos:ypos)-tmpLBSpos(j,xpos:ypos);
-                BBSbroadinfo(i,xpos:ypos)=BBSbroadinfo(i,xpos:ypos)+vector;
+           if sum(([estimX2 estimY2]-LBSbroadinfo(j,xpos:ypos)).^2)<sum(([estimX1,estimY1]-LBSbroadinfo(j,xpos:ypos)).^2)
+                vector=[estimX2,estimY2]-[estimX1,estimY1];
+                BBSbroadinfo(i,xpos:ypos)=BBSbroadinfo(i,xpos:ypos)+rand(1,1)*0.1*vector;  % 这里0.1是一个比例
            end
+           
+           tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;
+           
         end
     end
+    Error(1,loop)=sum(sqrt(sum(((BBSbroadinfo(:,xpos:ypos)-TrueBlinBSinfo(:,xpos:ypos)).^2)')))/BlinBSNum;
 end
-
+  
 
 
 
