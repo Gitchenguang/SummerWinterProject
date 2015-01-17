@@ -120,21 +120,26 @@ for loop=1:1:1000
            tmpBSCGrp(:,angle)=generangle( LBSbroadinfo(j,xpos:ypos),TrueBlinBSinfo);
            tmpcutBSCGrp(:,angle)=tmpBSCGrp(:,angle);
            
+           tmpcutLBSpos(j,:)=[];
+           tmpcutLBSpos(:,angle)=generangle( LBSbroadinfo(j,xpos:ypos),tmpcutLBSpos);
+           
            % 去除第i个Blind BSC后，重新定位Landmark
            tmpcutBSCGrp(i,:)=[];      
-           [estimX1,estimY1]=lslocation(tmpBSCGrp);
-           [estimX2,estimY2]=lslocation(tmpcutBSCGrp);          
+           [estimX1,estimY1]=lslocation([tmpBSCGrp;tmpcutLBSpos]);
+           [estimX2,estimY2]=lslocation([tmpcutBSCGrp;tmpcutLBSpos]);
+           
            % 判断位置并进行修正
            if sum(([estimX2 estimY2]-LBSbroadinfo(j,xpos:ypos)).^2)<sum(([estimX1,estimY1]-LBSbroadinfo(j,xpos:ypos)).^2)
                 vector=[estimX2,estimY2]-[estimX1,estimY1];
                 BBSbroadinfo(i,xpos:ypos)=BBSbroadinfo(i,xpos:ypos)+rand(1,1)*0.1*vector;  % 这里0.1是一个比例
            end
            
-           tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;
+           tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;tmpcutLBSpos=LBSbroadinfo;
            
         end
     end
     Error(1,loop)=sum(sqrt(sum(((BBSbroadinfo(:,xpos:ypos)-TrueBlinBSinfo(:,xpos:ypos)).^2)')))/BlinBSNum;
+    plot(Error,'DisplayName','Error','YDataSource','Error');
 end
   
 
