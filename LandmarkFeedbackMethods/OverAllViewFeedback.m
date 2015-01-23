@@ -109,7 +109,7 @@ BlinRealangle=zeros(1,LandBSNum);BlinFlaseangle=zeros(1,LandBSNum);
 tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;
 tmpLBSpos=LBSbroadinfo;tmpcutLBSpos=LBSbroadinfo;
 
-for loop=1:1:1000
+for loop=1:1:3000
     for i=1:1:BlinBSNum
         
        tmpBSCGrp=BBSbroadinfo;tmpcutBSCGrp=BBSbroadinfo;

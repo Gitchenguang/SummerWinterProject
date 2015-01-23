@@ -12,7 +12,7 @@
 % ***************************初始环境设置(开始)*****************************
 
 % 定位区域大小    landmark基站数目  blind基站数目      基站间的距离
-Aerawidth=100;   LandBSNum=3;      BlinBSNum=10;    LandBSspace=50;BlinBSspace=10;
+Aerawidth=100;   LandBSNum=3;      BlinBSNum=1000;    LandBSspace=50;BlinBSspace=0;
 
 % 基站广播的消息设定
 % 1:id  2:flag( Landmark/Blind )  3:xposition  4:yposition 5:headings 6:angle  
@@ -116,6 +116,8 @@ for i=1:1:BlinBSNum
 end
 
 InitialErrorDat=sqrt((BBSbroadinfo(:,xpos)-TrueBlinBSinfo(:,xpos)).^2+(BBSbroadinfo(:,ypos)-TrueBlinBSinfo(:,ypos)).^2);
+centers=1:1:50;
+hist(InitialErrorDat,centers);
 InitialMeanError= mean(InitialErrorDat);
 
 % ************************筛选高精度的BSC***************************************
